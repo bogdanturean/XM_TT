@@ -1,7 +1,7 @@
 # Dockerfile
 
 # Use the official Python image from the Docker Hub
-FROM python:3.12-slim
+FROM python:3.10-slim
 
 WORKDIR /app
 
@@ -15,7 +15,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Expose the port that the application will run on
-EXPOSE 8000
+EXPOSE 8080
 
 # Command to run the application
-CMD ["uvicorn", "--host", "127.0.0.1 ", "--port", "8000", "app.main:app", "--reload"]
+#CMD ["uvicorn", "--host", "127.0.0.1", "--port", "8080", "app.main:app", "--reload"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
