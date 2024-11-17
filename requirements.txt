@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+uuid
+simplejson
+jsonpath
+requests
+pydantic
+asyncio

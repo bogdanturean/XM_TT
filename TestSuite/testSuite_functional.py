@@ -1,6 +1,7 @@
 import requests
 import jsonpath
-import json
+#import json
+import simplejson as json
 import uuid
 from enum import Enum
 class Status(Enum):
@@ -155,18 +156,29 @@ class TestPlaceOrder:
         url ="http://127.0.0.1:8080/orders"
         v_response=requests.post(url,json={	"stoks": "ETH","quantity": 1})
         v_responsecode=v_response.status_code
+        v_responsecode=v_response.status_code
+        v_responsebody_json = json.loads(v_response.text)
+        v_responseid = jsonpath.jsonpath(v_responsebody_json, 'id')[0]
+        v_responsestock = jsonpath.jsonpath(v_responsebody_json, 'stoks')[0]
+        v_responsequantity = jsonpath.jsonpath(v_responsebody_json, 'quantity')[0]
+        v_responsestatus = jsonpath.jsonpath(v_responsebody_json, 'status')[0]
+
         orderscount = countordersinDB()
-        #print(v_response.text)
         assert v_responsecode == 201
-        assert orderscount == orderscountin + 1
+        assert orderscount == orderscountin+1
+        assert uuid.UUID(v_responseid, version=4).version == 4
+        assert v_responsestock in Stoks._value2member_map_
+        assert v_responsequantity>0
+        assert v_responsestatus in Status._value2member_map_
 
-def tes1tdeleteorder_TC_001():
+class TestCancelOrder:
+    def testdeleteorder_TC_001(self):
 
-    url ="http://127.0.0.1:8080/orders"
-    order = requests.get(url)
-    order_json = json.loads(order.text)
-    order_id = jsonpath.jsonpath(order_json[0],'id')
-    #print(order_id[0])
-    v_response=requests.delete(url+"/"+order_id[0])
-    v_responsecode=v_response.status_code
-    assert v_responsecode == 200
+        url ="http://127.0.0.1:8080/orders"
+        order = requests.get(url)
+        order_json = json.loads(order.text)
+        order_id = jsonpath.jsonpath(order_json[0],'id')
+        #print(order_id[0])
+        v_response=requests.delete(url+"/"+order_id[0])
+        v_responsecode=v_response.status_code
+        assert v_responsecode == 200
